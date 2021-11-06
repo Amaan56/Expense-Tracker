@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import './ExpenseForm.css';
 
-const ExpenseForm = () => {
+const ExpenseForm = (props) => {
   const [enteredTitle, setEnteredTitle] = useState('');
   const [enteredAmount, setEnteredAmount] = useState('');
   const [enteredDate, setEnteredDate] = useState('');
+  const [displayForm, setDisplayForm] = useState(false);
 
   const titleChangeHandler = (event) => {
     setEnteredTitle(event.target.value);
@@ -21,18 +22,33 @@ const ExpenseForm = () => {
   const submitHandler = (event) => {
     event.preventDefault();
 
-    const expenseData = {
+    const newExpense = {
+      id: Math.random(),
       title: enteredTitle,
-      amount: enteredAmount,
+      amount: +enteredAmount,
       date: new Date(enteredDate),
     };
 
-    console.log(expenseData);
+    props.onAddExpense(newExpense);
+
+    setDisplayForm(false);
 
     setEnteredTitle('');
     setEnteredAmount('');
     setEnteredDate('');
   };
+
+  const displayFormHandler = () => {
+    setDisplayForm(true);
+  };
+
+  const hideFormHandler = () => {
+    setDisplayForm(false);
+  };
+
+  if (!displayForm) {
+    return <button onClick={displayFormHandler}>Add Expense</button>;
+  }
 
   return (
     <form onSubmit={submitHandler}>
@@ -67,6 +83,9 @@ const ExpenseForm = () => {
         </div>
       </div>
       <div className="new-expense__actions">
+        <button type="button" onClick={hideFormHandler}>
+          Cancel
+        </button>
         <button type="submit">Add Expense</button>
       </div>
     </form>
